@@ -13,4 +13,4 @@ class Categoria {
         'id_categoria': id,
         'nome': nome,
       };
-}
+} // cometario pika
