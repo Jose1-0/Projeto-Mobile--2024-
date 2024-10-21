@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meu_estoque_app/models/movimentacao.dart';
 import 'package:meu_estoque_app/services/movimentacao_service.dart';
+import 'package:meu_estoque_app/services/produto_service.dart'; // Importação do ProdutoService
 import 'edit_movimentacao_screen.dart';
 
 class MovimentacaoScreen extends StatefulWidget {
@@ -10,6 +11,7 @@ class MovimentacaoScreen extends StatefulWidget {
 
 class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
   final MovimentacaoService _movimentacaoService = MovimentacaoService();
+  final ProdutoService _produtoService = ProdutoService(); // Instância do ProdutoService
   List<Movimentacao> _movimentacoes = [];
 
   @override
@@ -50,6 +52,64 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
     _fetchMovimentacoes();
   }
 
+  // Método para exibir a lista de compras
+  void _exibirListaDeCompras(BuildContext context) async {
+    final produtosParaCompra = await _produtoService.getProdutosParaCompra();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Lista de Compras'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: produtosParaCompra.isNotEmpty
+                  ? produtosParaCompra
+                  .map((produto) => Text('${produto.nome} (Faltam ${produto.quantidade - produto.quantidade})'))
+                  .toList()
+                  : [Text('Nenhum produto precisa de compra.')],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Fechar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Método para exibir produtos próximos ao vencimento
+  void _exibirProdutosProximosAoVencimento(BuildContext context) async {
+    final produtosProximosAoVencimento = await _produtoService.getProdutosProximosAoVencimento();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Produtos Próximos ao Vencimento'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: produtosProximosAoVencimento.isNotEmpty
+                  ? produtosProximosAoVencimento
+                  .map((produto) => Text('${produto.nome} (Vencimento: ${produto.dataValidade})'))
+                  .toList()
+                  : [Text('Nenhum produto está próximo ao vencimento.')],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Fechar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +121,14 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
           ElevatedButton(
             onPressed: _createMovimentacao,
             child: Text('Adicionar Movimentação'),
+          ),
+          ElevatedButton(
+            onPressed: () => _exibirListaDeCompras(context),
+            child: Text('Ver Lista de Compras'),
+          ),
+          ElevatedButton(
+            onPressed: () => _exibirProdutosProximosAoVencimento(context),
+            child: Text('Ver Produtos Próximos ao Vencimento'),
           ),
           Expanded(
             child: ListView.builder(
