@@ -31,8 +31,8 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              EditMovimentacaoScreen(movimentacao: movimentacao)),
+        builder: (context) => EditMovimentacaoScreen(movimentacao: movimentacao),
+      ),
     ).then((value) {
       if (value != null && value == true) {
         _fetchMovimentacoes(); // Atualiza a lista após editar
@@ -52,7 +52,7 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
     _fetchMovimentacoes();
   }
 
-  // Método para exibir a lista de compras
+  // Exibir lista de compras
   void _exibirListaDeCompras(BuildContext context) async {
     final produtosParaCompra = await _produtoService.getProdutosParaCompra();
 
@@ -64,9 +64,10 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
           content: SingleChildScrollView(
             child: ListBody(
               children: produtosParaCompra.isNotEmpty
-                  ? produtosParaCompra
-                  .map((produto) => Text('${produto.nome} (Faltam ${produto.quantidade - produto.quantidade})'))
-                  .toList()
+                  ? produtosParaCompra.map(
+                    (produto) => Text(
+                    '${produto.nome} (Faltam ${produto.quantidade - produto.quantidade})'),
+              ).toList()
                   : [Text('Nenhum produto precisa de compra.')],
             ),
           ),
@@ -81,9 +82,10 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
     );
   }
 
-  // Método para exibir produtos próximos ao vencimento
+  // Exibir produtos próximos ao vencimento
   void _exibirProdutosProximosAoVencimento(BuildContext context) async {
-    final produtosProximosAoVencimento = await _produtoService.getProdutosProximosAoVencimento();
+    final produtosProximosAoVencimento =
+    await _produtoService.getProdutosProximosAoVencimento();
 
     showDialog(
       context: context,
@@ -93,9 +95,10 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
           content: SingleChildScrollView(
             child: ListBody(
               children: produtosProximosAoVencimento.isNotEmpty
-                  ? produtosProximosAoVencimento
-                  .map((produto) => Text('${produto.nome} (Vencimento: ${produto.dataValidade})'))
-                  .toList()
+                  ? produtosProximosAoVencimento.map(
+                    (produto) => Text(
+                    '${produto.nome} (Vencimento: ${produto.dataValidade})'),
+              ).toList()
                   : [Text('Nenhum produto está próximo ao vencimento.')],
             ),
           ),
@@ -108,6 +111,41 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
         );
       },
     );
+  }
+
+  // Exibir histórico de movimentações com filtro de data
+  void _exibirHistoricoMovimentacao(BuildContext context) async {
+    final range = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (range != null) {
+      final totais = await _movimentacaoService.getTotaisPorTipo(range);
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Histórico de Movimentações'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Total de Entradas: ${totais['entradas']}'),
+                Text('Total de Saídas: ${totais['saidas']}'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -129,6 +167,10 @@ class _MovimentacaoScreenState extends State<MovimentacaoScreen> {
           ElevatedButton(
             onPressed: () => _exibirProdutosProximosAoVencimento(context),
             child: Text('Ver Produtos Próximos ao Vencimento'),
+          ),
+          ElevatedButton(
+            onPressed: () => _exibirHistoricoMovimentacao(context),
+            child: Text('Histórico de Movimentações'),
           ),
           Expanded(
             child: ListView.builder(
