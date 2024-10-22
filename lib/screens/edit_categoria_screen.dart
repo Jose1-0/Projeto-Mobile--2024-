@@ -33,15 +33,21 @@ class _EditCategoriaScreenState extends State<EditCategoriaScreen> {
       nome: _nomeController.text,
     );
     await _categoriaService.updateCategoria(updatedCategoria);
-    Navigator.pop(
-        context, true); // Retorna true para indicar que a edição foi concluída
+    Navigator.pop(context, true);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Categoria'),
+        title: const Text(
+          'Editar Categoria',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurple, // Cor do AppBar
+        centerTitle: true,
+        elevation: 4,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -49,12 +55,33 @@ class _EditCategoriaScreenState extends State<EditCategoriaScreen> {
           children: [
             TextField(
               controller: _nomeController,
-              decoration: InputDecoration(labelText: 'Nome'),
+              decoration: const InputDecoration(
+                labelText: 'Nome',
+                labelStyle: TextStyle(color: Colors.deepPurple), // Cor do label
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.deepPurple),
+                ),
+              ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _updateCategoria,
-              child: Text('Salvar'),
+              child: const Text(
+                'Salvar',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
           ],
         ),

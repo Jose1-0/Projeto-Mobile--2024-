@@ -35,15 +35,21 @@ class _EditEstoqueScreenState extends State<EditEstoqueScreen> {
       dataAtualizacao: DateTime.now().toIso8601String(),
     );
     await _estoqueService.updateEstoque(updatedEstoque);
-    Navigator.pop(
-        context, true); // Retorna true para indicar que a edição foi concluída
+    Navigator.pop(context, true);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Estoque'),
+        title: const Text(
+          'Editar Estoque',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurple,
+        centerTitle: true,
+        elevation: 4,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -51,12 +57,37 @@ class _EditEstoqueScreenState extends State<EditEstoqueScreen> {
           children: [
             TextField(
               controller: _nomeController,
-              decoration: InputDecoration(labelText: 'Nome'),
+              decoration: InputDecoration(
+                labelText: 'Nome',
+                labelStyle: const TextStyle(color: Colors.deepPurple),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.deepPurple),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _updateEstoque,
-              child: Text('Salvar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'Salvar',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         ),

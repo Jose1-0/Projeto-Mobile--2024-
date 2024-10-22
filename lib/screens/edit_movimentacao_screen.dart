@@ -44,15 +44,20 @@ class _EditMovimentacaoScreenState extends State<EditMovimentacaoScreen> {
       valorTotal: double.parse(_valorTotalController.text),
     );
     await _movimentacaoService.updateMovimentacao(updatedMovimentacao);
-    Navigator.pop(
-        context, true); // Retorna true para indicar que a edição foi concluída
+    Navigator.pop(context, true); // Retorna true para indicar que a edição foi concluída
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Movimentação'),
+        title: const Text('Editar Movimentação',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurple, // Cor do AppBar
+        centerTitle: true, // Centraliza o título
+        elevation: 4, // Sombra
+        iconTheme: const IconThemeData(color: Colors.white), // Ícone da seta de voltar
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -71,22 +76,45 @@ class _EditMovimentacaoScreenState extends State<EditMovimentacaoScreen> {
                   _tipoMovimentacao = newValue!;
                 });
               },
-              decoration: InputDecoration(labelText: 'Tipo de Movimentação'),
+              decoration: const InputDecoration(labelText: 'Tipo de Movimentação'),
             ),
+            const SizedBox(height: 16), // Espaçamento
             TextField(
               controller: _quantidadeController,
-              decoration: InputDecoration(labelText: 'Quantidade'),
+              decoration: const InputDecoration(
+                labelText: 'Quantidade',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: 16), // Espaçamento
             TextField(
               controller: _valorTotalController,
-              decoration: InputDecoration(labelText: 'Valor Total'),
+              decoration: const InputDecoration(
+                labelText: 'Valor Total',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
+            const SizedBox(height: 20), // Espaçamento antes do botão
+            ElevatedButton.icon(
               onPressed: _updateMovimentacao,
-              child: Text('Salvar'),
+              icon: const Icon(Icons.save, color: Colors.white),
+              label: const Text(
+                'Salvar',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white, // Cor do texto do botão
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple, // Cor do botão
+                minimumSize: const Size(double.infinity, 50), // Largura máxima
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // Bordas arredondadas
+                ),
+              ),
             ),
           ],
         ),
