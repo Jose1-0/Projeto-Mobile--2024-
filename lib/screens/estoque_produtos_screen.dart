@@ -62,37 +62,94 @@ class _EstoqueProdutosScreenState extends State<EstoqueProdutosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Produtos no Estoque: ${widget.estoque.nome}'),
+        title: Text(
+          'Produtos no Estoque: ${widget.estoque.nome}',
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurple,
+        centerTitle: true,
+        elevation: 4,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Column(
-        children: [
-          ElevatedButton(
-            onPressed: _createProduto,
-            child: Text('Adicionar Produto'),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _produtos.length,
-              itemBuilder: (context, index) {
-                final produto = _produtos[index];
-                return ListTile(
-                  title: Text(produto.nome),
-                  subtitle: Text('Quantidade: ${produto.quantidade}'),
-                  onTap: () {
-                    _navigateToEditProdutoScreen(produto);
-                  },
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () async {
-                      await _produtoService.deleteProduto(produto.id!);
-                      _fetchProdutos();
-                    },
-                  ),
-                );
-              },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ElevatedButton.icon(
+              onPressed: _createProduto,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text(
+                'Adicionar Produto',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Expanded(
+              child: _produtos.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: _produtos.length,
+                      itemBuilder: (context, index) {
+                        final produto = _produtos[index];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 3,
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            title: Text(
+                              produto.nome,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            subtitle: Text('Quantidade: ${produto.quantidade}'),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Colors.deepPurple),
+                                  onPressed: () {
+                                    _navigateToEditProdutoScreen(produto);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () async {
+                                    await _produtoService.deleteProduto(produto.id!);
+                                    _fetchProdutos();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : const Center(
+                      child: Text(
+                        'Nenhum produto encontrado',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
